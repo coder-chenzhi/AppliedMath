@@ -3,6 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/AppliedMath.iml" filepath="$PROJECT_DIR$/.idea/AppliedMath.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Crawler/.idea/Crawler.iml" filepath="$PROJECT_DIR$/../Crawler/.idea/Crawler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../PlayWithPython/.idea/PlayWithPython.iml" filepath="$PROJECT_DIR$/../PlayWithPython/.idea/PlayWithPython.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../TestPython/.idea/TestPython.iml" filepath="$PROJECT_DIR$/../TestPython/.idea/TestPython.iml" />
     </modules>
   </component>
 </project>

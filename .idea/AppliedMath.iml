@@ -6,5 +6,8 @@
     </content>
     <orderEntry type="jdk" jdkName="Python 2.7.9 (C:\Python27\python.exe)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="TestPython" />
+    <orderEntry type="module" module-name="PlayWithPython" />
+    <orderEntry type="module" module-name="Crawler" />
   </component>
 </module>
