@@ -3,6 +3,9 @@ __author__ = 'chenzhi'
 """
 modified base on
 http://scikit-learn.org/stable/auto_examples/mixture/plot_gmm.html
+reference
+http://en.wikipedia.org/wiki/Multivariate_normal_distribution
+
 """
 
 import itertools
