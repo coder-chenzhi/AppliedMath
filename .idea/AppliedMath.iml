@@ -9,5 +9,6 @@
     <orderEntry type="module" module-name="TestPython" />
     <orderEntry type="module" module-name="PlayWithPython" />
     <orderEntry type="module" module-name="Crawler" />
+    <orderEntry type="module" module-name="FundInAndOut" />
   </component>
 </module>

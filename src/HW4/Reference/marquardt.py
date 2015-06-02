@@ -1,11 +1,11 @@
 __author__ = 'chenzhi'
 
 
-def matcopy(A):
+def mat_copy(A):
     return [a[:] for a in A]
 
 
-def matinverse(AA, inplace=False):
+def mat_inverse(AA, inplace=False):
     """
     Determines the inverse of a square matrix BB by Gauss-Jordan reduction.
     """
@@ -47,7 +47,7 @@ def matinverse(AA, inplace=False):
         return None
 
 
-def matprint(A, format="%8.3f"):
+def mat_print(A, format="%8.3f"):
     # prints the matrix A using specified format
     m = len(A)
     try:
@@ -65,7 +65,7 @@ def matprint(A, format="%8.3f"):
     print
 
 
-def gausselim(AA, BB, pivoting=1, ztol=1.0e-8):
+def gausse_lim(AA, BB, pivoting=1, ztol=1.0e-8):
     """
      solves for X in AX = B.
      AA is a square matrix and B is a column vector(simple array).
@@ -127,7 +127,7 @@ def gausselim(AA, BB, pivoting=1, ztol=1.0e-8):
     return (0, R, AA, X, B)
 
 
-def SumSqr(X, Y, V, f, a):
+def sum_sqr(X, Y, V, f, a):
     """
     Args
        X,Y - data vectors
@@ -185,7 +185,7 @@ def marquardt(X, Y, V, f, J, a, maxiter=20, minchange=1.0e-3, minlambdax=1.0e-6,
     m = len(a)
     JtJ = [[0.0] * m for i in range(m)]
 
-    bestSS = SS = SumSqr(X, Y, V, f, a)
+    bestSS = SS = sum_sqr(X, Y, V, f, a)
     besta = a[:]
     Cov = None
 
@@ -218,17 +218,17 @@ def marquardt(X, Y, V, f, J, a, maxiter=20, minchange=1.0e-3, minlambdax=1.0e-6,
 
 
         # Solve for delta
-        lastCov = matinverse(JtJ)
+        lastCov = mat_inverse(JtJ)
         if lastCov is not None:
-            Cov = matcopy(lastCov)
-        code, R, A, delta, b = gausselim(JtJ, beta)
+            Cov = mat_copy(lastCov)
+        code, R, A, delta, b = gausse_lim(JtJ, beta)
         if code:
             flag = 4
             break
         totabsdelta = sum([abs(d) for d in delta])
         if debug:
             print "JtJ:"
-            matprint(JtJ, "%5.3lf")
+            mat_print(JtJ, "%5.3lf")
             print "beta = ", beta
             print "delta=", delta
             print "SS =", SS
@@ -240,14 +240,14 @@ def marquardt(X, Y, V, f, J, a, maxiter=20, minchange=1.0e-3, minlambdax=1.0e-6,
             newa = [a[i] + delta[i] for i in range(m)]
 
             # and new sum of squares
-            newSS = SumSqr(X, Y, V, f, newa)
+            newSS = sum_sqr(X, Y, V, f, newa)
             if debug: print "newSS = ", newSS
             # Update current parameter vector?
             if (newSS < bestSS):
                 if debug: print "improved values found!"
                 besta = newa[:]
                 bestSS = newSS
-                bestJtJ = matcopy(JtJ)
+                bestJtJ = mat_copy(JtJ)
                 a = newa[:]
 
                 iscomp = True
@@ -379,4 +379,4 @@ if __name__ == "__main__":
 
     print "Last computed inverse"
     if flag == 0 and Cov != None:
-        matprint(Cov, "%10.7lf ")
+        mat_print(Cov, "%10.7lf ")

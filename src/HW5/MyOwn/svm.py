@@ -10,14 +10,6 @@ def linear_kernel(x1, x2):
     return np.dot(x1, x2)
 
 
-def polynomial_kernel(x, y, p=3):
-    return (1 + np.dot(x, y)) ** p
-
-
-def gaussian_kernel(x, y, sigma=5.0):
-    return np.exp(-linalg.norm(x - y) ** 2 / (2 * (sigma ** 2)))
-
-
 class SVM(object):
     def __init__(self, kernel=linear_kernel, C=None):
         self.kernel = kernel
@@ -97,36 +89,11 @@ class SVM(object):
 if __name__ == "__main__":
     import pylab as pl
 
-    def gen_lin_separable_data():
+    def gen_data():
         # generate training data in the 2-d case
         mean1 = np.array([0, 2])
         mean2 = np.array([2, 0])
         cov = np.array([[0.8, 0.6], [0.6, 0.8]])
-        X1 = np.random.multivariate_normal(mean1, cov, 100)
-        y1 = np.ones(len(X1))
-        X2 = np.random.multivariate_normal(mean2, cov, 100)
-        y2 = np.ones(len(X2)) * -1
-        return X1, y1, X2, y2
-
-    def gen_non_lin_separable_data():
-        mean1 = [-1, 2]
-        mean2 = [1, -1]
-        mean3 = [4, -4]
-        mean4 = [-4, 4]
-        cov = [[1.0, 0.8], [0.8, 1.0]]
-        X1 = np.random.multivariate_normal(mean1, cov, 50)
-        X1 = np.vstack((X1, np.random.multivariate_normal(mean3, cov, 50)))
-        y1 = np.ones(len(X1))
-        X2 = np.random.multivariate_normal(mean2, cov, 50)
-        X2 = np.vstack((X2, np.random.multivariate_normal(mean4, cov, 50)))
-        y2 = np.ones(len(X2)) * -1
-        return X1, y1, X2, y2
-
-    def gen_lin_separable_overlap_data():
-        # generate training data in the 2-d case
-        mean1 = np.array([0, 2])
-        mean2 = np.array([2, 0])
-        cov = np.array([[1.5, 1.0], [1.0, 1.5]])
         X1 = np.random.multivariate_normal(mean1, cov, 100)
         y1 = np.ones(len(X1))
         X2 = np.random.multivariate_normal(mean2, cov, 100)
@@ -185,23 +152,9 @@ if __name__ == "__main__":
         pl.axis("tight")
         pl.show()
 
-    def plot_contour(X1_train, X2_train, clf):
-        pl.plot(X1_train[:, 0], X1_train[:, 1], "ro")
-        pl.plot(X2_train[:, 0], X2_train[:, 1], "bo")
-        pl.scatter(clf.sv[:, 0], clf.sv[:, 1], s=100, c="g")
-
-        X1, X2 = np.meshgrid(np.linspace(-6, 6, 50), np.linspace(-6, 6, 50))
-        X = np.array([[x1, x2] for x1, x2 in zip(np.ravel(X1), np.ravel(X2))])
-        Z = clf.project(X).reshape(X1.shape)
-        pl.contour(X1, X2, Z, [0.0], colors='k', linewidths=1, origin='lower')
-        pl.contour(X1, X2, Z + 1, [0.0], colors='grey', linewidths=1, origin='lower')
-        pl.contour(X1, X2, Z - 1, [0.0], colors='grey', linewidths=1, origin='lower')
-
-        pl.axis("tight")
-        pl.show()
 
     def test_linear():
-        X1, y1, X2, y2 = gen_lin_separable_data()
+        X1, y1, X2, y2 = gen_data()
         X_train, y_train = split_train(X1, y1, X2, y2)
         X_test, y_test = split_test(X1, y1, X2, y2)
 
@@ -213,33 +166,5 @@ if __name__ == "__main__":
         print "%d out of %d predictions correct" % (correct, len(y_predict))
 
         plot_margin(X_train[y_train == 1], X_train[y_train == -1], clf)
-
-    def test_non_linear():
-        X1, y1, X2, y2 = gen_non_lin_separable_data()
-        X_train, y_train = split_train(X1, y1, X2, y2)
-        X_test, y_test = split_test(X1, y1, X2, y2)
-
-        clf = SVM(gaussian_kernel)
-        clf.fit(X_train, y_train)
-
-        y_predict = clf.predict(X_test)
-        correct = np.sum(y_predict == y_test)
-        print "%d out of %d predictions correct" % (correct, len(y_predict))
-
-        plot_contour(X_train[y_train == 1], X_train[y_train == -1], clf)
-
-    def test_soft():
-        X1, y1, X2, y2 = gen_lin_separable_overlap_data()
-        X_train, y_train = split_train(X1, y1, X2, y2)
-        X_test, y_test = split_test(X1, y1, X2, y2)
-
-        clf = SVM(C=0.1)
-        clf.fit(X_train, y_train)
-
-        y_predict = clf.predict(X_test)
-        correct = np.sum(y_predict == y_test)
-        print "%d out of %d predictions correct" % (correct, len(y_predict))
-
-        plot_contour(X_train[y_train == 1], X_train[y_train == -1], clf)
 
     test_linear()

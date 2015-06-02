@@ -7,42 +7,59 @@ reference http://mathworld.wolfram.com/LeastSquaresFittingPolynomial.html
 import numpy as np
 import matplotlib.pyplot as plt
 import random
-import time
+
+def calc_poly_func(point, cof):
+    v = 0
+    for i in range(len(cof)):
+        v += point ** i * cof[i]
+    return v
 
 def calc_cost(x, y, cof):
     cost = 0.0
     for i in range(len(x)):
-        tmp = 0.0
-        for j in range(len(cof)):
-            tmp += x[i] ** j * cof[j]
-        cost += abs(tmp - y[i]) ** 2
+        y_tmp = calc_poly_func(x[i], cof)
+    try:
+        cost += abs(y_tmp - y[i]) ** 2
+    except Warning:
+        pass
+        # print "calc cost overflow", tmp, x, y, cof, cost
     return cost
 
 
 def calc_partial_derivatives(x, y, cof):
     partial_derivatives = []
-    for k in range(len(cof)):
+    for i in range(len(cof)):
         partial_derivative = 0.0
-        for i in range(len(x)):
-            tmp = 0.0
-            for j in range(len(cof)):
-                tmp += x[i] ** j * cof[j]
-            partial_derivative -= -2 * (y[i] - tmp) * (x[i] ** k)
+        for j in range(len(x)):
+            tmp = calc_poly_func(x[j], cof)
+            try:
+                partial_derivative -= 2 * (y[j] - tmp) * (x[j] ** i)
+                # print "partial_derivative", partial_derivative
+            except Warning:
+                pass
+                # print "calc partial_derivative overflow x[i], y[i], k, tmp", x[j], y[j], i, tmp
         partial_derivatives.append(partial_derivative)
     return partial_derivatives
 
 
-def poly_fit(x, y, deg, alpha=0.001, rounds=100000, prec=0.01):
-    cof = [0] * deg
-    cur_round = 0
-    while calc_cost(x, y, cof) > prec and cur_round < rounds:
-        partial_derivatives = calc_partial_derivatives(x, y, cof)
-        # print "partial_derivatives", partial_derivatives
-        for i in range(len(cof)):
-            cof[i] += alpha * partial_derivatives[i]
-        cur_round += 1
-    print "cof", cof
-    return cof
+def poly_fit(x, y, deg, alpha=0.000001, rounds=1000, prec=0.01):
+    initial_point_num = 1
+    minimum_cost = float("inf")
+    best_cof = []
+    for _ in range(initial_point_num):
+        cof = (np.random.random(deg) - 0.5).tolist()
+        cur_round = 0
+        while calc_cost(x, y, cof) > prec and cur_round < rounds:
+            print cur_round, cof
+            partial_derivatives = calc_partial_derivatives(x, y, cof)
+            # print "partial_derivatives", partial_derivatives
+            for i in range(len(cof)):
+                cof[i] += alpha * partial_derivatives[i]
+            cur_round += 1
+
+        if calc_cost(x, y, cof) < minimum_cost:
+            best_cof = cof
+    return best_cof
 
 
 def calc_func(cof, x):
@@ -111,9 +128,9 @@ def main():
     num = 10
     x, y = raw_data(num)
     y += gaussian_noise(num)
-    # x = [1, 2, 3]
-    # y = [1, 2, 3]
-    cof = poly_fit(x, y, 5, alpha=0.000000000001, rounds=13000, prec=0.00001)
+    x = [1, 2, 3]
+    y = [1, 2, 3]
+    cof = poly_fit(x, y, 2, alpha=0.0001, rounds=10000, prec=0.01)
     print "cof", cof
     draw_func_cof(cof, label="fit")
     # draw_func(np.sin, label="origin")

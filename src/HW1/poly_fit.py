@@ -43,7 +43,7 @@ def main():
     num = 10
     x, y = raw_data(num)
     y += gaussian_noise(num)
-    f = np.polyfit(x, y, 2)
+    f = np.polyfit(x, y, 5)
     draw_func(np.poly1d(f), label="fit")
     draw_func(np.sin, label="origin")
     plt.grid(True)
